@@ -1,3 +1,25 @@
+// ==UserScript==
+// @name         pbq - pbmobile assist
+// @namespace    local.pbq
+// @version      4.2
+// @description  pbmobile: panel in-game (PC + HP) + box ESP musuh + sticky auto-headshot aimbot + no recoil
+// @match        https://pbmobile.app/*
+// @match        https://*.pbmobile.app/*
+// @match        http://localhost/*
+// @run-at       document-start
+// @grant        none
+// ==/UserScript==
+
+/* ---- part 1: identity --------------------------------------------------
+ * The server bans the localStorage device id ("pbweb_dev"), not the account:
+ *   dev a2928ec0-15eb-46ea-9393-88417db78d07 -> authfail "hack detectado"
+ *   dev <fresh uuid4>                        -> welcome   (same IP, same fp)
+ * This keeps ONE stable, clean identity per browser profile; qz.newid() rerolls.
+ * It also swaps the hardware strings the client hashes into "fp" (GPU renderer,
+ * core count, memory) while the hashing code itself stays native.
+ * NEVER write pbweb_spoofed_fp / pbweb_spoofed_gpu - the scanner reads those two
+ * keys literally and flags "sf".
+ */
 (function () {
   var KEY = 'pbq_id', id = null;
   try { id = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) {}
